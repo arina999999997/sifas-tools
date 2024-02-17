@@ -1,0 +1,7 @@
+# refund period check fix
+# set the getter to return 2^63 - 1 inside TitleDM_GetRefundEndedAt
+[0233682c] = 00 00 f0 92
+
+# patch away the EOS thing
+# set TitleDM_IsHoldingTestModePeriod to return true
+[023368c8] = 20 00 80 d2 c0 03 5f d6

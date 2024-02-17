@@ -1,0 +1,3 @@
+# patch away the EOS thing
+# set TitleDM_IsHoldingTestModePeriod to return true
+[023eafa4] = 20 00 80 d2 c0 03 5f d6

@@ -1,0 +1,6 @@
+*.exe
+*.so
+*.dat
+*.patched
+*.smali
+*.txt
