@@ -128,9 +128,7 @@ public:
         string_literals[index].length = value.size();
     }
 
-    const std::string& get(const size_t index) {
-        return string_literals[index].data;
-    }
+    const std::string& get(const size_t index) { return string_literals[index].data; }
 
     void export_to_file(const std::string& path) {
         file = std::fstream(path, std::ios::out | std::ios::binary);
@@ -179,5 +177,13 @@ public:
             return;
         }
         file.close();
+    }
+
+    void dump_to_text(std::string path) const {
+        std::ofstream f(path);
+        for (size_t i = 0; i < string_literals.size(); i++) {
+            auto&& [length, offset, data] = string_literals[i];
+            f << i << '\t' << length << '\t' << data << '\n';
+        }
     }
 };

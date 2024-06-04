@@ -1,3 +1,30 @@
-# patch away the EOS thing
+### patch away the EOS thing
 # set TitleDM_IsHoldingTestModePeriod to return true
 [023eafa4] = 20 00 80 d2 c0 03 5f d6
+
+### enable daily theater
+# See the relevant .md for how this exactly works
+# branch from the old function to where we actually implement things 
+[0258e31c] =  24  73  f9  17  ###  b 0x023eafac FUN_023eafac
+# implement the HomeDM_GetDailyTheaterButtonVO function
+[023eafac] =  f3  0f  1e  f8    ###    str        x19 ,[sp, #-0x20 ]!
+[023eafb0] =  fd  7b  01  a9    ###    stp        x29 ,x30 ,[sp, #0x10 ]
+[023eafb4] =  fd  43  00  91    ###    add        x29 ,sp,#0x10
+[023eafb8] =  f3  8d  02  d0    ###    adrp       x19 ,0x75a8000
+[023eafbc] =  68  ce  5a  39    ###    ldrb       w8,[x19 , #0x6b3 ]
+[023eafc0] =  c8  00  08  37    ###    tbnz       w8,#0x1 ,LAB_023eafd8
+[023eafc4] =  00  b1  90  52    ###    mov        method ,#0x8589
+[023eafc8] =  35  59  ed  97    ###    bl         FUN_01f4149c
+[023eafcc] =  68  ce  5a  39    ###    ldrb       w8,[x19 , #0x6b3 ]
+[023eafd0] =  08  01  1f  32    ###    orr        w8,w8,#0x2
+[023eafd4] =  68  ce  1a  39    ###    strb       w8,[x19 , #0x6b3 ]
+[023eafd8] =  e8  65  02  90    ###    adrp       x8,0x70a6000
+[023eafdc] =  08  5d  43  f9    ###    ldr        x8,[x8, #0x6b8 ]
+[023eafe0] =  00  01  40  f9    ###    ldr        method ,[x8]
+[023eafe4] =  0d  41  ee  97    ###    bl         thunk_FUN_01f7b7a4
+[023eafe8] =  f3  03  00  aa    ###    mov        x19 ,method
+[023eafec] =  5a  95  06  94    ###    bl         HomeDM_DailyTheaterButtonVO__ctor_1
+[023eaff0] =  fd  7b  41  a9    ###    ldp        x29 =>local_10 ,x30 ,[sp, #0x10 ]
+[023eaff4] =  e0  03  13  aa    ###    mov        method ,x19
+[023eaff8] =  f3  07  42  f8    ###    ldr        x19 ,[sp], #0x20
+[023eaffc] =  c0  03  5f  d6    ###    ret

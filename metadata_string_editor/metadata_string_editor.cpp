@@ -4,7 +4,6 @@
 #include "metadata_file.h"
 #include "substitution_list.h"
 
-
 #define STRING_FROM_ARGV(variable)                                             \
     for (int __i = 1; __i + 1 < argc; __i += 2) {                              \
         if (std::string(argv[__i]) == "-" #variable) variable = argv[__i + 1]; \
@@ -16,13 +15,20 @@ void panic(const std::string message) {
 }
 
 int main(int argc, char** argv) {
-    std::string i, o, d, c;
+    std::string i, o, d, c, p;
     STRING_FROM_ARGV(i);
     STRING_FROM_ARGV(o);
     STRING_FROM_ARGV(d);
     STRING_FROM_ARGV(c);
+    STRING_FROM_ARGV(p);
     if (i.empty()) {
         panic("no input file");
+    }
+    if (!p.empty()) {
+        std::cerr << "dumping original to text file: " << p << '\n';
+        metadata_file_t metadata(i);
+        metadata.dump_to_text(p);
+        return 0;
     }
     if (o.empty()) {
         std::cerr << "default to output file: global-metadata.dat\n";
