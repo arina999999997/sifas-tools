@@ -1,3 +1,38 @@
-# patch away the EOS thing
+### patch away the EOS thing
 # set TitleDM_IsHoldingTestModePeriod to return true
 [0122d790] = 01 00 a0 e3 1e ff 2f e1
+
+### enable daily theater
+# this is pretty much the same patch as global:
+# - implement the same function in the same place (right after TitleDM_IsHoldingTestModePeriod)
+# - the main different is in the instruction set we have to work with
+# - Some offset are be defined in memory as loading them directly into register is hard
+
+# branch from the old function to where we actually implement things 
+[01410210] =  60  75  f8  ea  ###  b 0x0122d798
+
+# implement the HomeDM_GetDailyTheaterButtonVO function
+[0122d798] = 10  4c  2d  e9    ### stmdb      sp!,{r4,r10 ,r11 ,lr}
+[0122d79c] = 08  b0  8d  e2    ### add        r11,sp,#0x8
+[0122d7a0] = 40  00  9f  e5    ### ldr        r0,[0x0122d7e8]
+[0122d7a4] = 00  00  8f  e0    ### add        r0,pc,r0
+[0122d7a8] = 00  00  90  e5    ### ldr        r0,[r0,#0x0]
+[0122d7ac] = 00  00  50  e3    ### cmp        r0,#0x0
+[0122d7b0] = 04  00  00  1a    ### bne        0x0122d7c8
+[0122d7b4] = 30  00  9f  e5    ### ldr        r0,[0x122d7ec]
+[0122d7b8] = e6  53  ea  eb    ### bl         0x00cc2758
+[0122d7bc] = 2c  00  9f  e5    ### ldr        r0,[0x122d7f0]
+[0122d7c0] = 01  10  a0  e3    ### mov        r1,#0x1
+[0122d7c4] = 00  10  cf  e7    ### strb       r1,[pc,r0]
+[0122d7c8] = 24  00  9f  e5    ### ldr        r0,[0x122d7f4]
+[0122d7cc] = 00  00  9f  e7    ### ldr        r0,[pc,r0]
+[0122d7d0] = 00  00  90  e5    ### ldr        r0,[r0,#0x0]
+[0122d7d4] = 71  4c  eb  eb    ### bl         0x00d009a0
+[0122d7d8] = 00  40  a0  e1    ### cpy        r4,r0
+[0122d7dc] = 07  95  07  eb    ### bl         0x01412c00
+[0122d7e0] = 04  00  a0  e1    ### cpy        r0,r4
+[0122d7e4] = 10  8c  bd  e8    ### ldmia      sp!,{r4,r10 ,r11 ,pc}
+[0122d7e8] = 6f  d6  67  04    ### undefined4       467D66Fh    ### data 
+[0122d7ec] = 88  85  00  00    ### undefined4       8588h       ### data 
+[0122d7f0] = 4f  d6  67  04    ### undefined4       467D64Fh    ### data 
+[0122d7f4] = 1c  93  59  04    ### undefined4       459931Ch    ### data 
